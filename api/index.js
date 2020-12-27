@@ -35,10 +35,8 @@ app.get('/api/osu', async (req, res) => {
     res.send({ 
         username: user.username,
         id: parseInt(user.user_id),
-        ranks: {
-            global: parseInt(user.pp_rank),
-            country: parseInt(user.pp_country_rank),
-        },
+        globalRank: parseInt(user.pp_rank),
+        countryRank: parseInt(user.pp_country_rank),
         country: user.country,
         pp: parseFloat(user.pp_raw),
         level: parseInt(user.level),

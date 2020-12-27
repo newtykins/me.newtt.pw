@@ -8,18 +8,35 @@ const spotify = new(require('node-spotify-api'))({
 });
 
 app.use(require('morgan')('dev')); // morgan logger middleware
-app.use(require('cors')); // cors
+
+const cors = require('cors')({
+    methods: ['GET', 'HEAD'],
+});
+
+const runMiddleware = (req, res, fn) => {
+    return new Promise((resolve, reject) => {
+        fn(req, res, (result) => {
+        if (result instanceof Error) {
+            return reject(result)
+        }
+
+        return resolve(result)
+        })
+    })
+};
 
 const formatNumber = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 // osu
-app.get('/api/osu', async (_req, res) => {
+app.get('/api/osu', async (req, res) => {
+    await runMiddleware(req, res, cors);
     const data = (await axios.get(`https://osu.ppy.sh/api/get_user?k=${process.env.OSU}&u=16009610`)).data;
     res.send({ rank: formatNumber(data[0].pp_rank) });
 });
 
 // scrobbling
-app.get('/api/song', async (_req, res) => {
+app.get('/api/song', async (req, res) => {
+    await runMiddleware(req, res, cors);
     const recentTrack = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=itsnewt&api_key=${process.env.LASTFM}&format=json&limit=1`)
         .then(res => res.data.recenttracks.track[0]);
     const spotifyTrack = (await spotify.search({ type: 'track', query: `${recentTrack.artist['#text']} - ${recentTrack.name}`})).tracks.items[0];

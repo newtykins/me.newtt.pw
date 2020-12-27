@@ -42,6 +42,7 @@ app.get('/api/osu', async (req, res) => {
         level: parseInt(user.level),
         timePlayed: ms(parseInt(user.total_seconds_played) * 1000, { long: true }),
         accuracy: parseFloat(parseFloat(user.accuracy).toFixed(2)),
+        avatar: `https://a.ppy.sh/${user.user_id}`,
         join_date: user.join_date,
         hits: {
             total: parseInt(user.count300) + parseInt(user.count100) + parseInt(user.count50),

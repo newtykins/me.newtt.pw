@@ -1,0 +1,51 @@
+* {
+    margin: 0;
+    padding-left: 10px;
+}
+
+@font-face {
+    font-family: 'League Spartan';
+    src: url('./LeagueSpartan.ttf');
+    font-size: 14pt;
+}
+
+body {
+    font-family: monospace;
+    color: #212121;
+    font-size: 12pt;
+}
+
+h1 {
+    font-family: 'League Spartan', monospace;
+    font-size: 28pt;
+    text-align: center;
+    padding-top: 14pt;
+}
+
+h2 {
+    text-align: center;
+    padding-top: 7pt;
+    padding-bottom: 14pt;
+}
+
+h3 {
+    font-size: 20pt;
+}
+
+a {
+    color: #424242;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    padding-left: 14pt;
+}
+
+img {
+    padding-top: 14pt;
+    padding-left: 625pt;
+}

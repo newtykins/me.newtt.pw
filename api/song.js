@@ -1,25 +1,10 @@
-const app = require('express')();
 const axios = require('axios');
-const ms = require('ms');
-
 const spotify = new(require('node-spotify-api'))({
     id: process.env.SPOTIFYID,
     secret: process.env.SPOTIFYSECRET
 });
 
-app.use(require('cors')()); // cors middleware
-app.use(require('morgan')('dev')); // morgan logger middleware
-
-const formatNumber = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-// osu
-app.get('/osu', async (_req, res) => {
-    const data = (await axios.get(`https://osu.ppy.sh/api/get_user?k=${process.env.OSU}&u=16009610`)).data;
-    res.send({ rank: formatNumber(data[0].pp_rank) });
-});
-
-// scrobbling
-app.get('/song', async (_req, res) => {
+module.export = async (_req, res) => {
     const recentTrack = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=itsnewt&api_key=${process.env.LASTFM}&format=json&limit=1`)
         .then(res => res.data.recenttracks.track[0]);
     const spotifyTrack = (await spotify.search({ type: 'track', query: `${recentTrack.artist['#text']} - ${recentTrack.name}`})).tracks.items[0];
@@ -55,7 +40,4 @@ app.get('/song', async (_req, res) => {
     } else {
         res.send({ message: 'newt is not listening to anything at the moment!' });
     }
-});
-
-// start server
-app.listen('8080', () => console.log('Server started!'));
+}

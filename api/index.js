@@ -8,6 +8,7 @@ const spotify = new(require('node-spotify-api'))({
 });
 
 app.use(require('morgan')('dev')); // morgan logger middleware
+app.use(require('cors')); // cors
 
 const formatNumber = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
@@ -56,5 +57,4 @@ app.get('/api/song', async (_req, res) => {
     }
 });
 
-// start server
-app.listen('8080', () => console.log('Server started!'));
+module.exports = app;

@@ -1,0 +1,22 @@
+{
+  "name": "newttpw-api",
+  "private": "true",
+  "description": "Backend for my website!",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "ms": "^2.1.3",
+    "node-spotify-api": "^1.1.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  },
+  "scripts": {
+    "dev": "node -r dotenv/config index.js"
+  }
+}

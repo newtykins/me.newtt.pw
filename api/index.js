@@ -25,13 +25,51 @@ const runMiddleware = (req, res, fn) => {
     })
 };
 
-const formatNumber = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
 // osu
 app.get('/api/osu', async (req, res) => {
     await runMiddleware(req, res, cors);
-    const data = (await axios.get(`https://osu.ppy.sh/api/get_user?k=${process.env.OSU}&u=16009610`)).data;
-    res.send({ rank: formatNumber(data[0].pp_rank) });
+
+    const id = req.query.id ? req.query.id : '16009610';
+    const user = (await axios.get(`https://osu.ppy.sh/api/get_user?k=${process.env.OSU}&u=${id}`)).data[0];
+
+    res.send({ 
+        username: user.username,
+        id: parseInt(user.user_id),
+        ranks: {
+            global: parseInt(user.pp_rank),
+            country: parseInt(user.pp_country_rank),
+        },
+        country: user.country,
+        pp: parseFloat(user.pp_raw),
+        level: parseInt(user.level),
+        timePlayed: ms(parseInt(user.total_seconds_played) * 1000, { long: true }),
+        accuracy: parseFloat(parseFloat(user.accuracy).toFixed(2)),
+        join_date: user.join_date,
+        hits: {
+            total: parseInt(user.count300) + parseInt(user.count100) + parseInt(user.count50),
+            300: parseInt(user.count300),
+            100: parseInt(user.count100),
+            50: parseInt(user.count50),
+        },
+        playcount: parseInt(user.playcount),
+        scores: {
+            ranked: parseInt(user.ranked_score),
+            total: parseInt(user.total_score),
+        },
+        ranks: {
+            ss: {
+                nomod: parseInt(user.count_rank_ss),
+                hidden: parseInt(user.count_rank_ssh),
+                total: parseInt(user.count_rank_ss) + parseInt(user.count_rank_ssh),
+            },
+            s: {
+                nomod: parseInt(user.count_rank_s),
+                hidden: parseInt(user.count_rank_sh),
+                total: parseInt(user.count_rank_s) + parseInt(user.count_rank_sh),
+            },
+            a: user.count_rank_a,
+        },
+    });
 });
 
 // scrobbling

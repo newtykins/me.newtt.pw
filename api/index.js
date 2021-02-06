@@ -7,8 +7,6 @@ const spotify = new(require('node-spotify-api'))({
     secret: process.env.SPOTIFYSECRET
 });
 
-app.use(require('morgan')('dev')); // morgan logger middleware
-
 const cors = require('cors')({
     methods: ['GET', 'HEAD'],
 });
@@ -74,6 +72,7 @@ app.get('/api/osu', async (req, res) => {
 // scrobbling
 app.get('/api/song', async (req, res) => {
     await runMiddleware(req, res, cors);
+
     const recentTrack = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=itsnewt&api_key=${process.env.LASTFM}&format=json&limit=1`)
         .then(res => res.data.recenttracks.track[0]);
     const spotifyTrack = (await spotify.search({ type: 'track', query: `${recentTrack.artist['#text']} - ${recentTrack.name}`})).tracks.items[0];

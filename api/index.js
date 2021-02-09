@@ -27,11 +27,13 @@ const runMiddleware = (req, res, fn) => {
 };
 
 // osu
-app.get('/osu', async (req, res) => {
+app.get('/api/osu', async (req, res) => {
     await runMiddleware(req, res, cors);
 
     const id = req.query.id ? req.query.id : '16009610';
     const user = (await axios.get(`https://osu.ppy.sh/api/get_user?k=${process.env.OSU}&u=${id}`)).data[0];
+
+    console.log(user);
 
     res.send({ 
         username: user.username,
@@ -73,7 +75,7 @@ app.get('/osu', async (req, res) => {
 });
 
 // scrobbling
-app.get('/scrobbling', async (req, res) => {
+app.get('/api/scrobbling', async (req, res) => {
     await runMiddleware(req, res, cors);
 
     const recentTrack = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=itsnewt&api_key=${process.env.LASTFM}&format=json&limit=1`)
@@ -85,6 +87,7 @@ app.get('/scrobbling', async (req, res) => {
             res.send({
                 name: spotifyTrack.name,
                 type: 'spotify',
+                osu: recentTrack.album['#text'] === 'osu!',
                 url: spotifyTrack.external_urls.spotify,
                 uri: spotifyTrack.uri,
                 preview: spotifyTrack.preview_url,
@@ -118,6 +121,7 @@ app.get('/scrobbling', async (req, res) => {
                 res.send({
                     name: soundcloudTrack.title,
                     type: 'soundcloud',
+                    osu: recentTrack.album['#text'] === 'osu!',
                     url: soundcloudTrack.permalink_url,
                     uri: soundcloudTrack.uri,
                     id: soundcloudTrack.id,
@@ -131,6 +135,7 @@ app.get('/scrobbling', async (req, res) => {
                 res.send({
                     name: recentTrack.name,
                     type: 'lastfm',
+                    osu: recentTrack.album['#text'] === 'osu!',
                     url: recentTrack.url,
                     album: recentTrack.album['#text'],
                     artist: recentTrack.artist['#text'],

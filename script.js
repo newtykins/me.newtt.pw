@@ -1,5 +1,5 @@
 // newt's song
-fetch(new URL('https://about.newtt.me/song'))
+fetch(new URL('https://about.newtt.me/api/song'))
     .then(res => res.json())
     .then(res => {
         // Fetch the element
@@ -21,7 +21,7 @@ fetch(new URL('https://about.newtt.me/song'))
     .catch(err => console.error('There was an issue fetching data about newt\'s current song. Sorry!', err));
 
 // newt's osu profile
-fetch(new URL('https://about.newtt.me/osu'))
+fetch(new URL('https://about.newtt.me/api/osu'))
     .then(res => res.json())
     .then(res => {
         document.getElementById('username').innerText = res.username;
@@ -35,7 +35,7 @@ fetch(new URL('https://about.newtt.me/osu'))
     .catch(err => console.error('There was an issue fetching information about newt\'s osu profile. Sorry!', err));
     
 // mute's osu profile
-fetch(new URL('https://about.newtt.me/osu?id=18137394'))
+fetch(new URL('https://about.newtt.me/api/osu?id=18137394'))
 .then(res => res.json())
 .then(res => {
     document.getElementById('username2').innerText = res.username;

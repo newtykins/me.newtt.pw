@@ -113,33 +113,37 @@ app.get('/api/scrobbling', async (req, res) => {
                 }),
             });
         } catch (err) {
-            const soundcloudTracks = await soundcloud.getTracks(encodeURI(`${recentTrack.artist['#text']} - ${recentTrack.name}`), 10);
+            try {
+                const soundcloudTracks = await soundcloud.getTracks(encodeURI(`${recentTrack.artist['#text']} - ${recentTrack.name}`), 10);
 
-            if (soundcloudTracks.length > 0) {
-                const soundcloudTrack = soundcloudTracks[0];
+                if (soundcloudTracks.length > 0) {
+                    const soundcloudTrack = soundcloudTracks[0];
 
-                res.send({
-                    name: soundcloudTrack.title,
-                    type: 'soundcloud',
-                    osu: recentTrack.album['#text'] === 'osu!',
-                    url: soundcloudTrack.permalink_url,
-                    uri: soundcloudTrack.uri,
-                    id: soundcloudTrack.id,
-                    duration: ms(soundcloudTrack.full_duration, { long: true }),
-                    album: recentTrack.album['#text'],
-                    artist: soundcloudTrack.publisher_metadata.artist,
-                    uploadedBy: soundcloudTrack.user.username,
-                    artwork: soundcloudTrack.artwork_url,
-                })
-            } else {
-                res.send({
-                    name: recentTrack.name,
-                    type: 'lastfm',
-                    osu: recentTrack.album['#text'] === 'osu!',
-                    url: recentTrack.url,
-                    album: recentTrack.album['#text'],
-                    artist: recentTrack.artist['#text'],
-                });
+                    res.send({
+                        name: recentTrack.name,
+                        type: 'soundcloud',
+                        osu: recentTrack.album['#text'] === 'osu!',
+                        url: soundcloudTrack.permalink_url,
+                        uri: soundcloudTrack.uri,
+                        id: soundcloudTrack.id,
+                        duration: ms(soundcloudTrack.full_duration, { long: true }),
+                        album: recentTrack.album['#text'],
+                        artist: soundcloudTrack.publisher_metadata.artist,
+                        uploadedBy: soundcloudTrack.user.username,
+                        artwork: soundcloudTrack.artwork_url,
+                    })
+                } else {
+                    res.send({
+                        name: recentTrack.name,
+                        type: 'lastfm',
+                        osu: recentTrack.album['#text'] === 'osu!',
+                        url: recentTrack.url,
+                        album: recentTrack.album['#text'],
+                        artist: recentTrack.artist['#text'],
+                    });
+                }
+            } catch (err) {
+                res.send({ message: 'there was an error trying to fetch what newt was listening to!', error: err, });        
             }
         }
     } else {

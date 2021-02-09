@@ -122,13 +122,12 @@ app.get('/api/scrobbling', async (req, res) => {
                     res.send({
                         name: recentTrack.name,
                         type: 'soundcloud',
-                        osu: recentTrack.album['#text'] === 'osu!',
                         url: soundcloudTrack.permalink_url,
                         uri: soundcloudTrack.uri,
                         id: soundcloudTrack.id,
                         duration: ms(soundcloudTrack.full_duration, { long: true }),
                         album: recentTrack.album['#text'],
-                        artist: soundcloudTrack.publisher_metadata.artist,
+                        artist: recentTrack.artist['#text'],
                         uploadedBy: soundcloudTrack.user.username,
                         artwork: soundcloudTrack.artwork_url,
                     })
@@ -136,7 +135,6 @@ app.get('/api/scrobbling', async (req, res) => {
                     res.send({
                         name: recentTrack.name,
                         type: 'lastfm',
-                        osu: recentTrack.album['#text'] === 'osu!',
                         url: recentTrack.url,
                         album: recentTrack.album['#text'],
                         artist: recentTrack.artist['#text'],

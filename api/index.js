@@ -7,6 +7,9 @@ const spotify = new(require('node-spotify-api'))({
     secret: process.env.SPOTIFYSECRET
 });
 
+const soundcloud = new (require('sc-searcher'))();
+soundcloud.init(process.env.SOUNDCLOUD);
+
 const cors = require('cors')({
     methods: ['GET', 'HEAD'],
 });
@@ -24,7 +27,7 @@ const runMiddleware = (req, res, fn) => {
 };
 
 // osu
-app.get('/api/osu', async (req, res) => {
+app.get('/osu', async (req, res) => {
     await runMiddleware(req, res, cors);
 
     const id = req.query.id ? req.query.id : '16009610';
@@ -70,44 +73,75 @@ app.get('/api/osu', async (req, res) => {
 });
 
 // scrobbling
-app.get('/api/song', async (req, res) => {
+app.get('/scrobbling', async (req, res) => {
     await runMiddleware(req, res, cors);
 
     const recentTrack = await axios.get(`http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=itsnewt&api_key=${process.env.LASTFM}&format=json&limit=1`)
         .then(res => res.data.recenttracks.track[0]);
     const spotifyTrack = (await spotify.search({ type: 'track', query: `${recentTrack.artist['#text']} - ${recentTrack.name}`})).tracks.items[0];
-    const nowPlaying = recentTrack.hasOwnProperty('@attr');
 
-    if (nowPlaying) {
-        res.send({
-            name: spotifyTrack.name,
-            url: spotifyTrack.external_urls.spotify,
-            uri: spotifyTrack.uri,
-            preview: spotifyTrack.preview_url,
-            id: spotifyTrack.id,
-            duration: ms(spotifyTrack.duration_ms, { long: true }),
-            album: {
-                name: spotifyTrack.album.name,
-                url: spotifyTrack.album.external_urls.spotify,
-                uri: spotifyTrack.album.uri,
-                id: spotifyTrack.album.id,
-                images: spotifyTrack.album.images,
-                releaseDate: spotifyTrack.album.release_date,
-                trackCount: spotifyTrack.album.total_tracks,
-                trackNumber: spotifyTrack.track_number,
-            },
-            artists: await spotifyTrack.artists.map(artist => {
-                return {
-                    name: artist.name,
-                    url: artist.external_urls.spotify,
-                    uri: artist.uri,
-                    id: artist.id,
-                };
-            }),
-        });
+    if (recentTrack.hasOwnProperty('@attr')) {
+        try {
+            res.send({
+                name: spotifyTrack.name,
+                type: 'spotify',
+                url: spotifyTrack.external_urls.spotify,
+                uri: spotifyTrack.uri,
+                preview: spotifyTrack.preview_url,
+                id: spotifyTrack.id,
+                duration: ms(spotifyTrack.duration_ms, { long: true }),
+                album: {
+                    name: spotifyTrack.album.name,
+                    url: spotifyTrack.album.external_urls.spotify,
+                    uri: spotifyTrack.album.uri,
+                    id: spotifyTrack.album.id,
+                    images: spotifyTrack.album.images,
+                    releaseDate: spotifyTrack.album.release_date,
+                    trackCount: spotifyTrack.album.total_tracks,
+                    trackNumber: spotifyTrack.track_number,
+                },
+                artists: await spotifyTrack.artists.map(artist => {
+                    return {
+                        name: artist.name,
+                        url: artist.external_urls.spotify,
+                        uri: artist.uri,
+                        id: artist.id,
+                    };
+                }),
+            });
+        } catch (err) {
+            const soundcloudTracks = await soundcloud.getTracks(encodeURI(`${recentTrack.artist['#text']} - ${recentTrack.name}`), 10);
+
+            if (soundcloudTracks.length > 0) {
+                const soundcloudTrack = soundcloudTracks[0];
+
+                res.send({
+                    name: soundcloudTrack.title,
+                    type: 'soundcloud',
+                    url: soundcloudTrack.permalink_url,
+                    uri: soundcloudTrack.uri,
+                    id: soundcloudTrack.id,
+                    duration: ms(soundcloudTrack.full_duration, { long: true }),
+                    album: recentTrack.album['#text'],
+                    artist: soundcloudTrack.publisher_metadata.artist,
+                    uploadedBy: soundcloudTrack.user.username,
+                    artwork: soundcloudTrack.artwork_url,
+                })
+            } else {
+                res.send({
+                    name: recentTrack.name,
+                    type: 'lastfm',
+                    url: recentTrack.url,
+                    album: recentTrack.album['#text'],
+                    artist: recentTrack.artist['#text'],
+                });
+            }
+        }
     } else {
         res.send({ message: 'newt is not listening to anything at the moment!' });
     }
 });
+
+app.listen(8080);
 
 module.exports = app;

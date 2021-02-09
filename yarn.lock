@@ -602,7 +602,7 @@ request-promise@^4.2.1:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request@^2.81.0:
+request@^2.81.0, request@^2.88.2:
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==
@@ -642,6 +642,13 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
+
+sc-searcher@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/sc-searcher/-/sc-searcher-1.0.5.tgz#7684565f0d4a56deaccdee3b0fdf49afcf465a1b"
+  integrity sha512-U0aSC0BSrpcTBECd7eIEQ9SRtriGN1mRsB7qEKAinJDGY390BNqDSBwt+kSNz2T+oVW1CLYyZ7qy9rgWsyBH6w==
+  dependencies:
+    request "^2.88.2"
 
 send@0.17.1:
   version "0.17.1"

@@ -9,7 +9,7 @@ fetch(new URL('https://about.newtt.me/api/song'))
             // Update the content of the element
             const artist = res.artists[0].name.toLowerCase();
             const song = res.name.toLowerCase();
-            el.innerHTML = `newt is currently listening to: <a href="${res.url}">${artist} - ${song}</a>`;
+            el.innerHTML = `newt is currently listening to: <a href="${res.yt.url}">${artist} - ${song}</a>`;
 
             console.log(`Currently listening to ${artist} - ${song}`);
             console.log(res);
